@@ -12,9 +12,23 @@ app = FastAPI()
 last_input = {"text": None, "from_lang": None, "to_lang": None}
 
 INDIAN_LANGUAGES = [
-    "Hindi", "Tamil", "Telugu", "Bengali", "Malayalam",
-    "Kannada", "Marathi", "Gujarati", "Punjabi", "Urdu",
-    "Assamese", "Odia"
+    # ✅ 22 Official Languages (8th Schedule)
+    "Assamese", "Bengali", "Bodo", "Dogri", "Gujarati",
+    "Hindi", "Kannada", "Kashmiri", "Konkani", "Maithili",
+    "Malayalam", "Manipuri", "Marathi", "Nepali", "Odia",
+    "Punjabi", "Sanskrit", "Santali", "Sindhi", "Tamil",
+    "Telugu", "Urdu",
+
+    # 🌍 Widely Spoken but Not in 8th Schedule
+    "Bhojpuri", "Rajasthani", "Tulu", "Chhattisgarhi", "Magahi",
+    "Haryanvi", "Awadhi", "Marwari", "Garhwali", "Lepcha",
+    "Mizo", "Pahari", "Bhili", "Gondi", "Khasi", "Mundari",
+    "Nagpuri", "Sourashtra", "Angika", "Mizo", "Ladakhi",
+
+    # 🛕 Classical & Literary
+    "Prakrit", "Pali"
+
+    # You can expand further based on dialectal mapping
 ]
 
 class SmartTranslationRequest(BaseModel):
