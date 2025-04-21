@@ -1,8 +1,12 @@
 from fastapi import FastAPI, Request
 from pydantic import BaseModel
 import openai
+from openai import OpenAI
 import os
 import re
+import uvicorn
+from dotenv import load_dotenv
+load_dotenv()
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -21,14 +25,11 @@ INDIAN_LANGUAGES = [
 
     # 🌍 Widely Spoken but Not in 8th Schedule
     "Bhojpuri", "Rajasthani", "Tulu", "Chhattisgarhi", "Magahi",
-    "Haryanvi", "Awadhi", "Marwari", "Garhwali", "Lepcha",
-    "Mizo", "Pahari", "Bhili", "Gondi", "Khasi", "Mundari",
-    "Nagpuri", "Sourashtra", "Angika", "Mizo", "Ladakhi",
+    "Haryanvi", "Awadhi", "Marwari", "Garhwali", "Lepcha", "Mizo", "Pahari", "Bhili", "Gondi",
+    "Khasi", "Mundari", "Nagpuri", "Sourashtra", "Angika", "Ladakhi",
 
     # 🛕 Classical & Literary
     "Prakrit", "Pali"
-
-    # You can expand further based on dialectal mapping
 ]
 
 class SmartTranslationRequest(BaseModel):
@@ -93,12 +94,13 @@ async def smart_translate(request: SmartTranslationRequest):
     )
 
     try:
-        response = openai.ChatCompletion.create(
-            model="gpt-4",
+        client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+        response = client.chat.completions.create(
+            model="gpt-4o",
             messages=[{"role": "system", "content": prompt}],
             temperature=0.2
         )
-        translated = response.choices[0].message["content"].strip()
+        translated = response.choices[0].message.content.strip()
 
         # Save to memory
         last_input["text"] = translated
@@ -111,4 +113,11 @@ async def smart_translate(request: SmartTranslationRequest):
         }
 
     except Exception as e:
-        return {"error": str(e)}
+        return {
+            "error": "Translation failed due to a backend issue. Try again.",
+            "details": str(e)
+        }
+
+if __name__ == "__main__":
+
+    uvicorn.run(app, host="0.0.0.0", port=8000)
